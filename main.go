@@ -78,7 +78,7 @@ type Article struct {
 
 func articlesShowHandler(w http.ResponseWriter, r *http.Request) {
 	// 1. 获取 url 参数
-	id := getRouteVariable("id", r)
+	id := route.GetRouteVariable("id", r)
 
 	// 2. 读取对应的文章数据
 	article, err := getArticleByID(id)
@@ -272,7 +272,7 @@ func saveArticleToDB(title string, body string) (int64, error) {
 
 func articlesEditHandler(w http.ResponseWriter, r *http.Request) {
 	// 1. 获取 URL 参数
-	id := getRouteVariable("id", r)
+	id := route.GetRouteVariable("id", r)
 
 	// 2. 读取对应的文章数据
 	article, err := getArticleByID(id)
@@ -309,7 +309,7 @@ func articlesEditHandler(w http.ResponseWriter, r *http.Request) {
 func articlesUpdateHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 1. 获取 URL 参数
-	id := getRouteVariable("id", r)
+	id := route.GetRouteVariable("id", r)
 
 	// 2. 读取对应的文章数据
 	_, err := getArticleByID(id)
@@ -375,11 +375,6 @@ func articlesUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getRouteVariable(parameterName string, r *http.Request) string {
-	vars := mux.Vars(r)
-	return vars[parameterName]
-}
-
 func getArticleByID(id string) (Article, error) {
 	article := Article{}
 	query := "select * from articles where id = ?"
@@ -434,7 +429,7 @@ func (a Article) Delete() (int64, error) {
 
 func articlesDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	// 1. 获取 URL 参数
-	id := getRouteVariable("id", r)
+	id := route.GetRouteVariable("id", r)
 
 	// 2. 读取对应的文章数据
 	article, err := getArticleByID(id)
