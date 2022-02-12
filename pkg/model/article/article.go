@@ -1,6 +1,7 @@
 package article
 
 import (
+	"goblog/pkg/model"
 	"goblog/pkg/route"
 	"strconv"
 )
@@ -8,7 +9,7 @@ import (
 // Article 文章模型
 
 type Article struct {
-	ID    uint64
+	model.BaseModel
 	Title string
 	Body  string
 }
