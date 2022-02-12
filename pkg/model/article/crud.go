@@ -16,3 +16,13 @@ func Get(idstr string) (Article, error) {
 
 	return article, err
 }
+
+func GetAll() ([]Article, error) {
+	var err error
+	var articles []Article
+
+	if err = model.DB.Find(&articles).Error; err != nil {
+		return articles, err
+	}
+	return articles, nil
+}
