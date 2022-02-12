@@ -45,45 +45,6 @@ type Article struct {
 	ID          int64
 }
 
-func articlesStoreHandler(w http.ResponseWriter, r *http.Request) {
-	title := r.PostFormValue("title")
-	body := r.PostFormValue("body")
-
-	errors := validateArticleFormData(title, body)
-	// 检查是否有错误
-	if len(errors) == 0 {
-		lastInsertId, err := saveArticleToDB(title, body)
-		if lastInsertId > 0 {
-			fmt.Fprint(w, "插入成功，ID 为"+strconv.FormatInt(lastInsertId, 10))
-		} else {
-			logger.LogError(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprint(w, "500 服务器内部错误")
-		}
-	} else {
-		storeURL, _ := router.Get("articles.store").URL()
-		data := ArticlesFormData{
-			Title:  title,
-			Body:   body,
-			URL:    storeURL,
-			Errors: errors,
-		}
-
-		// tmpl, err := template.New("craete-form").Parse(html)
-		tmpl, err := template.ParseFiles("resources/views/articles/create.gohtml")
-
-		if err != nil {
-			panic(err)
-		}
-
-		err = tmpl.Execute(w, data)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-}
-
 func forceHTMLMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		// 1. 设置标头
@@ -103,26 +64,6 @@ func removeTrailingSlash(next http.Handler) http.Handler {
 		// 2. 将请求传递下去
 		next.ServeHTTP(rw, r)
 	})
-}
-
-func articlesCreateHandler(w http.ResponseWriter, r *http.Request) {
-	storeURL, _ := router.Get("articles.store").URL()
-	data := ArticlesFormData{
-		Title:  "",
-		Body:   "",
-		URL:    storeURL,
-		Errors: nil,
-	}
-
-	tmpl, err := template.ParseFiles("resources/views/articles/create.gohtml")
-	if err != nil {
-		panic(err)
-	}
-
-	err = tmpl.Execute(w, data)
-	if err != nil {
-		panic(err)
-	}
 }
 
 // ArticlesFormData 创建博文表单数据
@@ -377,9 +318,6 @@ func main() {
 	// router.StrictSlash(true)
 
 	// router.HandleFunc("/articles/{id:[0-9]+}", articlesShowHandler).Methods("GET").Name("articles.show")
-	router.HandleFunc("/articles", articlesStoreHandler).Methods("POST").Name("articles.store")
-
-	router.HandleFunc("/articles/create", articlesCreateHandler).Methods("GET").Name("articles.create")
 
 	router.HandleFunc("/articles/{id:[0-9]+}/edit", articlesEditHandler).Methods("GET").Name("articles.edit")
 	router.HandleFunc("/articles/{id:[0-9]+}", articlesUpdateHandler).Methods("POST").Name("articles.update")
