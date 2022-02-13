@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"fmt"
+	"goblog/app/policies"
 	"goblog/app/requests"
+	"goblog/pkg/flash"
 	"goblog/pkg/logger"
 	"goblog/pkg/model/article"
 	"goblog/pkg/route"
@@ -44,9 +46,11 @@ func (*ArticlesController) Show(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprint(w, "500 服务器内部错误")
 		}
 	} else {
-		fmt.Println(article.User.Link(), 333333)
 		// ---  4. 读取成功，显示文章 ---
-		view.Render(w, view.D{"Article": article}, "articles.show", "articles._article_meta")
+		view.Render(w, view.D{
+			"Article":          article,
+			"CanModifyArticle": policies.CanModifyArticle(article),
+		}, "articles.show", "articles._article_meta")
 	}
 
 }
@@ -122,6 +126,13 @@ func (*ArticlesController) Edit(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprint(w, "500 服务器内部错误")
 		}
 	} else {
+		// 检查权限
+		if !policies.CanModifyArticle(_article) {
+			flash.Warning("未授权操作！")
+			http.Redirect(w, r, "/", http.StatusFound)
+			return
+		}
+
 		// 4. 读取成功，显示编辑文章表单
 		view.Render(w, view.D{
 			"Article": _article,
@@ -153,6 +164,13 @@ func (*ArticlesController) Update(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		// 4. 未出现错误
+
+		// 检查权限
+		if !policies.CanModifyArticle(_article) {
+			flash.Warning("未授权操作！")
+			http.Redirect(w, r, "/", http.StatusForbidden)
+			return
+		}
 
 		// 4.1 表单验证
 		_article.Title = r.PostFormValue("title")
@@ -212,6 +230,14 @@ func (*ArticlesController) Delete(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprint(w, "500 服务器内部错误")
 		}
 	} else {
+
+		// 检查权限
+		if !policies.CanModifyArticle(_article) {
+			flash.Warning("未授权操作！")
+			http.Redirect(w, r, "/", http.StatusFound)
+			return
+		}
+
 		// 4. 未出现错误，执行删除操作
 		rowsAffected, err := _article.Delete()
 
