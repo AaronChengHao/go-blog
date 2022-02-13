@@ -5,6 +5,8 @@ import (
 	"goblog/pkg/types"
 
 	"goblog/pkg/password"
+
+	"goblog/pkg/route"
 )
 
 // User 用户模型
@@ -42,6 +44,7 @@ func (user User) ComparePassword(_password string) bool {
 	return password.CheckHash(_password, user.Password)
 }
 
+// Link 方法用来生成用户链接
 func (user User) Link() string {
-	return "22222"
+	return route.Name2URL("users.show", "id", user.GetStringID())
 }
