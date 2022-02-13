@@ -8,6 +8,8 @@ import (
 
 	"goblog/pkg/config"
 
+	"goblog/pkg/model/category"
+
 	"gorm.io/gorm"
 )
 
@@ -36,5 +38,6 @@ func migration(db *gorm.DB) {
 	db.AutoMigrate(
 		&user.User{},
 		&article.Article{},
+		&category.Category{},
 	)
 }
