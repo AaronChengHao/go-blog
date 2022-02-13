@@ -61,3 +61,13 @@ func (*AuthController) DoRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+// login 显示登录表单
+func (*AuthController) Login(w http.ResponseWriter, r *http.Request) {
+	view.RenderSimple(w, view.D{}, "auth.login")
+}
+
+// Dologin 处理登陆表单提交
+func (*AuthController) DoLogin(w http.ResponseWriter, r *http.Request) {
+
+}
