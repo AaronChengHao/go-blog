@@ -11,7 +11,8 @@ func init() {
 
 		// 是否进入调试模式
 		"debug": Env("APP_DEBUG", false),
-
+		// 用以生成链接
+		"url": Env("APP_URL", "http://localhost:3000"),
 		// 应用服务端口
 		"port": Env("APP_PORT", "3000"),
 
