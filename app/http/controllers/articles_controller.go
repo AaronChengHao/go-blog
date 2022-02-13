@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"goblog/pkg/auth"
 	"goblog/pkg/logger"
 	"goblog/pkg/model/article"
 	"goblog/pkg/route"
@@ -263,9 +262,4 @@ func (*ArticlesController) Delete(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-}
-
-func (*AuthController) Logout(rw http.ResponseWriter, r *http.Request) {
-	auth.Logout()
-	http.Redirect(rw, r, "/", http.StatusFound)
 }
