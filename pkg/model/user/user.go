@@ -38,6 +38,10 @@ func GetByEmail(email string) (User, error) {
 }
 
 // ComparePassword 对比密码是否匹配
-func (user *User) ComparePassword(_password string) bool {
+func (user User) ComparePassword(_password string) bool {
 	return password.CheckHash(_password, user.Password)
+}
+
+func (user User) Link() string {
+	return "22222"
 }
