@@ -7,6 +7,8 @@ import (
 	"goblog/pkg/model/user"
 	"goblog/pkg/view"
 	"net/http"
+
+	"goblog/pkg/auth"
 )
 
 // AuthController 处理静态页面
@@ -69,5 +71,20 @@ func (*AuthController) Login(w http.ResponseWriter, r *http.Request) {
 
 // Dologin 处理登陆表单提交
 func (*AuthController) DoLogin(w http.ResponseWriter, r *http.Request) {
+	// 初始化表单数据
+	email := r.PostFormValue("email")
+	password := r.PostFormValue("password")
 
+	// 2. 尝试登录
+	if err := auth.Attempt(email, password); err == nil {
+		// 登录成功
+		http.Redirect(w, r, "/", http.StatusFound)
+	} else {
+		// 3. 失败，显示错误提示
+		view.RenderSimple(w, view.D{
+			"Error":    err.Error(),
+			"Email":    email,
+			"Password": password,
+		}, "auth.login")
+	}
 }
